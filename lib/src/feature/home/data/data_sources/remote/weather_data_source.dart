@@ -18,7 +18,7 @@ class WeatherRemoteDataSourceImp extends WeatherRemoteDataSource {
   Future<WeatherDataModel> getWeatherDataAction(Position position) async {
     final responseJson = await Server.instance.getRequest(
         url:
-            "${ApiCredential.getWeatherData}?key=$apiKey&q=${position.latitude},${position.longitude}&days=3&aqi=no&alerts=no");
+            "${ApiCredential.getWeatherData}?key=$apiKey&q=${position.latitude},${position.longitude}&days=4&aqi=no&alerts=no");
     WeatherDataModel responseModel = WeatherDataModel.fromJson(responseJson);
     return responseModel;
   }

@@ -3,9 +3,6 @@ import 'package:weather_app/src/core/constants/strings.dart';
 
 import '../constants/app_theme.dart';
 
-
-
-
 class CustomButton extends StatelessWidget with AppTheme {
   final VoidCallback onTap;
   final Color? bgColor, borderColor;

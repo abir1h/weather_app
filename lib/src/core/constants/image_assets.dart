@@ -4,7 +4,10 @@ class ImageAssets {
   //:::::::::::::::::: IMAGE SETS ::::::::::::::::::
   static String get weather => 'Animation - 1727236586949'.json;
   static String get splashAnitmation => 'Animation - 1727236939848'.json;
+  static String get loader => 'Animation - 1727282930219'.json;
+  static String get sunset => 'Animation - 1727285179658'.json;
   static String get locationIcon => 'location'.svg;
+  static String get object => 'object'.png;
 
 
 
