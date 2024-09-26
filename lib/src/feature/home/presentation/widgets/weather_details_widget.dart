@@ -1,27 +1,20 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:gradient_borders/box_borders/gradient_box_border.dart';
 import 'package:intl/intl.dart';
-import 'package:latlng/latlng.dart';
+import 'package:transformable_list_view/transformable_list_view.dart';
 import 'package:weather_app/src/core/constants/app_theme.dart';
 import 'package:weather_app/src/core/constants/image_assets.dart';
-import 'package:weather_app/src/feature/home/data/mapper/current_data_mapper.dart';
-import 'package:weather_app/src/feature/home/data/mapper/weather_data_mapper.dart';
 import 'package:weather_app/src/feature/home/data/models/current_data_model.dart';
 import 'package:weather_app/src/feature/home/data/models/weather_data_model.dart';
+import 'package:weather_app/src/feature/home/presentation/widgets/perception_widget.dart';
 import 'package:weather_app/src/feature/home/presentation/widgets/sunset_widget.dart';
 import 'package:weather_app/src/feature/home/presentation/widgets/temp_section_widget.dart';
 import '../../../../core/common_widgets/tab_widget.dart';
-import '../../domain/entities/current_data_entity.dart';
-import 'package:weather_app/src/feature/home/domain/entities/forcast_day_data_entity.dart';
-import '../../domain/entities/weather_data_entity.dart';
-
 import '../service/weather_service.dart';
 import '../widgets/location_widget.dart';
+import 'feels_like_widget.dart';
 
 class WeatherDetails extends ConsumerWidget with AppTheme {
   final Position position;
@@ -70,8 +63,24 @@ class WeatherDetails extends ConsumerWidget with AppTheme {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
+            Positioned(
+            bottom: -80, // Align the image to the bottom
+            left: 0,
+            right: 0,
+            child: Container(
+              width: 1.sw,
+              height: 290.h, // Adjust height as needed
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(ImageAssets.object),
+                  fit: BoxFit
+                      .fitWidth, // Make sure the image fits the width of the screen
+                ),
+              ),
+            ),
+          ),
+
             SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -176,29 +185,53 @@ class WeatherDetails extends ConsumerWidget with AppTheme {
                     ),
                   ),
                   SizedBox(height: size.h32,),
-                  SunsetWidget(data: weatherData,)
-                ],
-              ),
-            ),
-            Positioned(
-              bottom: -80, // Align the image to the bottom
-              left: 0,
-              right: 0,
-              child: Container(
-                width: 1.sw,
-                height: 290.h, // Adjust height as needed
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(ImageAssets.object),
-                    fit: BoxFit
-                        .fitWidth, // Make sure the image fits the width of the screen
+                  LayoutBuilder(
+
+                    builder: (context, constraints) {
+                      return TransformableListView(padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        getTransformMatrix: getTransformMatrix,
+                        scrollDirection: Axis.vertical,
+                        physics: NeverScrollableScrollPhysics(),
+                        children: [
+                          FeelsLikeWidget(data: weatherData,),
+                          SunsetWidget(data: weatherData),
+                          PerceptionWidget(data: weatherData),
+                        ],
+                      );
+                    },
                   ),
-                ),
+
+
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+  Matrix4 getTransformMatrix(TransformableListItem item) {
+    /// final scale of child when the animation is completed
+    const endScaleBound = 0.3;
+
+    /// 0 when animation completed and [scale] == [endScaleBound]
+    /// 1 when animation starts and [scale] == 1
+    final animationProgress = item.visibleExtent / item.size.height;
+
+    /// result matrix
+    final paintTransform = Matrix4.identity();
+
+    /// animate only if item is on edge
+    if (item.position != TransformableListItemPosition.middle) {
+      final scale = endScaleBound + ((1 - endScaleBound) * animationProgress);
+
+      paintTransform
+        ..translate(item.size.width / 2)
+        ..scale(scale)
+        ..translate(-item.size.width / 2);
+    }
+
+    return paintTransform;
   }
 }

@@ -30,9 +30,7 @@ class HomeScreen extends ConsumerWidget with AppTheme {
               ),
             );
           },
-          loading: () => const Center(
-            child: CircularProgressIndicator(),
-          ),
+          loading: () =>const LoaderWidget(),
           error: (error, stackTrace) => Center(
             child: Text('Error fetching location: $error'),
           ),

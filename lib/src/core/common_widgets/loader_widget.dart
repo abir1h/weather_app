@@ -22,7 +22,7 @@ class LoaderWidget extends StatelessWidget with AppTheme{
       children: [
         SizedBox(height: .3.sh,),
         Lottie.asset(ImageAssets.loader),
-        Text("Please wait while loading",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 20.sp,color: Colors.black),)
+        Text("Please wait weather is loading",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 20.sp,color: Colors.white),)
       ],
     )
     );
